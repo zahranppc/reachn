@@ -1,0 +1,884 @@
+<title>ReachN</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Instrument+Sans:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+:root{
+  color-scheme:light dark;
+  --bg:#F4F6FB; --surface:#FFFFFF; --surface-2:#EAEEF7;
+  --ink:#0E1630; --ink-2:#4A5473; --ink-3:#8790AB;
+  --line:#D9DEEC; --line-2:#C3CADD;
+  --brand:#2447F9; --brand-ink:#FFFFFF; --brand-text:#2447F9; --brand-soft:#E3E8FF;
+  --gold:#F2B233; --gold-text:#8A5A00;
+  --ok:#0F7B4F; --ok-soft:#DDF3E9; --warn:#B35A00; --warn-soft:#FCEBD9;
+  --shadow:0 20px 50px rgba(14,22,48,.14);
+  --tile:url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%2224%22%20height%3D%2224%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cg%20transform%3D%22translate%286%209.76%29%20scale%280.12%29%22%3E%3Cpath%20fill%3D%22%232A2A2A%22%20d%3D%22M48.69%2037.28C31.59%2036.84%2014.45%2030.51%200.00%2019.21L14.46%200.72C25.79%209.59%2039.22%2014.24%2052.23%2013.81C64.47%2013.41%2074.87%208.50%2081.52%200.00L100.00%2014.45C89.00%2028.53%2072.30%2036.63%2053.00%2037.26C51.57%2037.31%2050.13%2037.31%2048.69%2037.28%22%2F%3E%3C%2Fg%3E%3C%2Fsvg%3E");
+  --t-black:#111111; --t-aqua:#00FFA8; --t-paper:#F8F8F0;
+  --display:'Bricolage Grotesque','Instrument Sans',system-ui,sans-serif;
+  --font:'Instrument Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+}
+@media (prefers-color-scheme:dark){
+  :root:not([data-theme="light"]){
+    --bg:#0B1020; --surface:#131A30; --surface-2:#1A2340;
+    --ink:#EEF1FA; --ink-2:#AAB3CF; --ink-3:#737D9C;
+    --line:#25304F; --line-2:#34406A;
+    --brand:#4F6BFF; --brand-text:#9DADFF; --brand-soft:#1C2757;
+    --gold-text:#F2B233;
+    --ok:#4AD6A0; --ok-soft:#123528; --warn:#FF9462; --warn-soft:#3A2312;
+    --shadow:0 20px 50px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#0B1020; --surface:#131A30; --surface-2:#1A2340;
+  --ink:#EEF1FA; --ink-2:#AAB3CF; --ink-3:#737D9C;
+  --line:#25304F; --line-2:#34406A;
+  --brand:#4F6BFF; --brand-text:#9DADFF; --brand-soft:#1C2757;
+  --gold-text:#F2B233;
+  --ok:#4AD6A0; --ok-soft:#123528; --warn:#FF9462; --warn-soft:#3A2312;
+  --shadow:0 20px 50px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+[hidden]{display:none!important}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--font);font-size:16px;line-height:1.55}
+h1,h2,h3,h4{margin:0;text-wrap:balance;line-height:1.08}
+h1,h2{font-family:var(--display);letter-spacing:-.025em;font-weight:800}
+h3,h4{letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.wrap{max-width:1160px;margin-inline:auto;padding-inline:clamp(16px,4vw,40px)}
+.eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.12em;text-transform:uppercase;color:var(--brand-text)}
+.muted{color:var(--ink-2)}
+.mono{font-family:var(--mono);font-size:.82em}
+
+/* ReachN marks */
+.rn{font-family:var(--display);font-weight:800;letter-spacing:-.03em;white-space:nowrap}
+.rn b{display:inline-block;background:var(--brand);color:#fff;border-radius:.28em;padding:0 .2em;margin-left:.06em;position:relative;line-height:1.15}
+.rn b::after{content:"";position:absolute;right:-.14em;top:-.14em;width:.34em;height:.34em;border-radius:50%;background:var(--gold);border:.07em solid var(--bg)}
+.pwr{display:inline-flex;align-items:center;gap:.35em;font-family:var(--font);font-size:.68rem;font-weight:500;letter-spacing:.02em;opacity:.8;white-space:nowrap}
+.pwr .rn{font-size:1.1em}
+.pwr .rn b::after{border-color:transparent}
+.on-dark .rn b,.pwr.on-dark .rn b{background:#fff;color:#111}
+.wm{height:20px;width:auto;display:block;aspect-ratio:1000/168.19}
+
+/* buttons */
+.btn{border:1px solid var(--ink);background:var(--ink);color:var(--bg);border-radius:10px;padding:11px 18px;font-weight:600;font-size:.92rem;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none;line-height:1.2}
+.btn.pri{background:var(--brand);border-color:var(--brand);color:#fff}
+.btn.ghost{background:transparent;color:var(--ink);border-color:var(--line-2)}
+.btn.sm{padding:7px 12px;font-size:.8rem;border-radius:8px}
+.btn.wallet{background:#000;border-color:#000;color:#fff;border-radius:10px}
+.btn:hover{filter:brightness(.93)}
+.field{border:1px solid var(--line-2);border-radius:9px;padding:9px 11px;font-size:.92rem;background:var(--surface);color:var(--ink);width:100%}
+textarea.field{resize:vertical;min-height:84px}
+label.f{display:grid;gap:5px;font-size:.78rem;color:var(--ink-2);font-weight:600}
+.pill{display:inline-block;padding:2px 9px;border-radius:999px;font-size:.72rem;font-weight:700}
+.pill.ok{background:var(--ok-soft);color:var(--ok)}
+.pill.warn{background:var(--warn-soft);color:var(--warn)}
+.pill.pend{background:var(--surface-2);color:var(--ink-2)}
+.pill.new{background:var(--brand-soft);color:var(--brand-text)}
+
+/* site header / footer */
+.sh{position:sticky;top:0;z-index:20;background:color-mix(in srgb,var(--bg) 88%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.sh .wrap{display:flex;align-items:center;gap:20px;padding-block:14px;flex-wrap:wrap}
+.sh .rn{font-size:1.45rem;text-decoration:none}
+.sh nav{display:flex;gap:4px;margin-left:12px;flex-wrap:wrap}
+.sh nav a{text-decoration:none;font-size:.92rem;font-weight:500;color:var(--ink-2);padding:6px 10px;border-radius:8px}
+.sh nav a[aria-current="page"]{color:var(--ink);background:var(--surface-2)}
+.sh .r{margin-left:auto;display:flex;gap:8px}
+.sf{border-top:1px solid var(--line);margin-top:72px;padding-block:40px 56px}
+.sf .g{display:grid;grid-template-columns:1.4fr repeat(3,1fr);gap:32px}
+.sf h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.1em;color:var(--ink-3);margin-bottom:10px}
+.sf a{display:block;text-decoration:none;color:var(--ink-2);font-size:.92rem;padding-block:3px}
+.sf .rn{font-size:1.5rem}
+.sf .legal{margin-top:32px;font-size:.8rem;color:var(--ink-3)}
+
+/* site sections */
+.hero{display:grid;grid-template-columns:1.1fr .9fr;gap:48px;align-items:center;padding-block:64px 48px}
+.hero h1{font-size:clamp(2.5rem,5.6vw,4.6rem)}
+.hero h1 i{font-style:normal;color:var(--brand-text)}
+.hero .lede{font-size:1.15rem;max-width:34em;margin-top:20px;color:var(--ink-2)}
+.cta{margin-top:28px;display:flex;gap:12px;flex-wrap:wrap}
+.assets{display:flex;flex-wrap:wrap;gap:8px;margin-top:28px}
+.assets span{border:1px solid var(--line-2);border-radius:999px;padding:4px 12px;font-size:.8rem;color:var(--ink-2);background:var(--surface)}
+.sec{padding-block:56px;border-top:1px solid var(--line)}
+.sec-h{max-width:46em;margin-bottom:32px}
+.sec-h h2{font-size:clamp(1.7rem,3.2vw,2.5rem);margin-top:10px}
+.sec-h p{margin-top:12px;color:var(--ink-2);font-size:1.05rem}
+.page-h{padding-block:56px 8px}
+.page-h h1{font-size:clamp(2.2rem,4.6vw,3.6rem);margin-top:12px;max-width:16em}
+.page-h p{margin-top:16px;color:var(--ink-2);font-size:1.1rem;max-width:40em}
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:20px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:24px;display:flex;flex-direction:column;gap:8px}
+.tile h3{font-size:1.15rem}
+.tile p{color:var(--ink-2);font-size:.95rem}
+.tile a.more{margin-top:auto;padding-top:10px;color:var(--brand-text);font-weight:600;font-size:.88rem;text-decoration:none}
+.tile .k{font-family:var(--mono);font-size:.7rem;letter-spacing:.1em;text-transform:uppercase;color:var(--gold-text)}
+.plain{display:grid;grid-template-columns:repeat(3,1fr);gap:32px}
+.plain b{display:block;font-size:1.05rem;margin-bottom:6px}
+.plain p{color:var(--ink-2);font-size:.95rem}
+.plain div{border-top:2px solid var(--ink);padding-top:14px}
+.flow{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;counter-reset:s}
+.flow div{border-top:2px solid var(--brand);padding-top:14px}
+.flow div::before{counter-increment:s;content:"Step " counter(s);font-family:var(--mono);font-size:.72rem;color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase}
+.flow b{display:block;margin:6px 0 4px}
+.flow p{font-size:.92rem;color:var(--ink-2)}
+.ul{list-style:none;margin:0;padding:0;display:grid;gap:8px}
+.ul li{display:flex;gap:10px;align-items:flex-start;font-size:.95rem}
+.ul li::before{content:"";flex:0 0 18px;height:18px;margin-top:3px;border-radius:5px;background:var(--brand) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 16 16'%3E%3Cpath fill='none' stroke='%23fff' stroke-width='2.2' stroke-linecap='round' stroke-linejoin='round' d='M3.5 8.5l3 3 6-6'/%3E%3C/svg%3E") center/12px no-repeat}
+.band{background:var(--ink);color:var(--bg);border-radius:20px;padding:40px;display:flex;justify-content:space-between;align-items:center;gap:24px;flex-wrap:wrap}
+.band h2{font-size:clamp(1.5rem,3vw,2.2rem);max-width:18em}
+.band .btn{background:var(--bg);color:var(--ink);border-color:var(--bg)}
+.feat{display:grid;grid-template-columns:240px 1fr;gap:32px;padding-block:32px;border-top:1px solid var(--line)}
+.feat h2{font-size:1.5rem}
+.feat .items{display:grid;grid-template-columns:repeat(2,1fr);gap:18px 28px}
+.feat .items b{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+.feat .items p{color:var(--ink-2);font-size:.93rem;margin-top:3px}
+.feat .items a{color:var(--brand-text);font-size:.85rem;font-weight:600;text-decoration:none}
+.plans{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;align-items:start}
+.plan{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:14px}
+.plan.hot{border:2px solid var(--brand)}
+.plan .price{font-family:var(--display);font-size:2.4rem;font-weight:800;letter-spacing:-.03em;font-variant-numeric:tabular-nums;line-height:1}
+.plan .price small{font-family:var(--font);font-size:.8rem;font-weight:500;color:var(--ink-2);letter-spacing:0}
+details{border-top:1px solid var(--line);padding-block:16px}
+details:last-child{border-bottom:1px solid var(--line)}
+summary{cursor:pointer;font-weight:600;font-size:1.05rem;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::after{content:"+";font-family:var(--mono);color:var(--ink-3)}
+details[open] summary::after{content:"–"}
+details p{margin-top:10px;color:var(--ink-2);max-width:48em}
+.demo{display:grid;grid-template-columns:1fr 1fr;gap:40px;align-items:start}
+.demo form{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:26px;display:grid;gap:14px}
+
+/* hero stack + physical card (tenant brand) */
+.stack{position:relative;height:350px}
+.stack .nfc{position:absolute;left:4%;top:24%;width:74%;transform:rotate(-7deg);z-index:2}
+.stack .phone{position:absolute;right:0;top:0;width:44%;transform:rotate(5deg);z-index:1}
+.nfc{aspect-ratio:1.586;border-radius:14px;background:var(--t-black);color:var(--t-paper);padding:6%;position:relative;overflow:hidden;box-shadow:var(--shadow);font-size:clamp(9px,1.3vw,13px);container-type:inline-size}
+.nfc .arc{position:absolute;right:-18%;bottom:-32%;width:80%;color:var(--t-aqua)}
+.arc svg{width:100%;height:auto;display:block;aspect-ratio:100/37.31}
+.nfc .wm{height:1.5em}
+.nfc .who{position:absolute;left:6%;bottom:8%;line-height:1.2}
+.nfc .who b{display:block;font-size:1.45em;font-weight:700}
+.nfc .who span{display:block;opacity:.75;font-size:.95em}
+.nfc .qr{position:absolute;right:6%;top:6%;width:22%;aspect-ratio:1;background:#fff;border-radius:6%;padding:1.2%;display:grid}
+.qr canvas,.qr img,.qrbig canvas,.qrbig img{width:100%!important;height:100%!important;display:block;image-rendering:pixelated}
+.nfc .chip{position:absolute;left:6%;top:38%;width:11%;aspect-ratio:1.25;border-radius:12%;background:linear-gradient(135deg,#e6cf8f,#a8894a)}
+.nfc .nfcmark{position:absolute;right:6%;bottom:8%;font-family:var(--mono);font-size:.8em;opacity:.7;letter-spacing:.1em;z-index:1;color:var(--t-black)}
+.nfc.back .arc{right:auto;left:-10%;bottom:-40%;width:70%;transform:scaleX(-1)}
+.nfc.back .wm{position:absolute;left:50%;top:46%;transform:translate(-50%,-50%);height:2.2em}
+.nfc.back .pwr{position:absolute;right:6%;bottom:7%;color:var(--t-paper);font-size:.8em}
+.nfc.back .url{position:absolute;left:0;right:0;top:62%;text-align:center;font-family:var(--mono);font-size:.8em;opacity:.7}
+.phone{aspect-ratio:9/18.5;border-radius:36px;background:#111;padding:10px;box-shadow:var(--shadow)}
+.phone .scr{background:var(--surface);border-radius:28px;height:100%;overflow:hidden auto;color:var(--ink);position:relative;scrollbar-width:none}
+.phone .notch{position:absolute;top:8px;left:50%;transform:translateX(-50%);width:34%;height:16px;background:#111;border-radius:999px;z-index:3}
+.pp{font-size:.78rem;padding-bottom:14px}
+.pp .hd{background:var(--t-black);color:var(--t-paper);height:108px;position:relative;overflow:hidden}
+.pp .hd .arc{position:absolute;right:-12%;bottom:-40%;width:60%;color:var(--t-aqua)}
+.pp .hd .wm{position:absolute;left:16px;top:44px;height:12px}
+.av{width:30px;height:30px;border-radius:50%;background:#072928;color:var(--t-aqua);display:inline-grid;place-items:center;font-size:.7rem;font-weight:800;overflow:hidden;flex:none}
+.av img{width:100%;height:100%;object-fit:cover}
+.pp .av{width:68px;height:68px;font-size:1.1rem;margin:-34px 0 0 16px;border:4px solid var(--surface);position:relative;z-index:2;display:grid}
+.pp .nm{padding:8px 16px 0}
+.pp .nm b{font-size:1.05rem;display:block}
+.pp .nm span{color:var(--ink-2);display:block}
+.pp .acts{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 16px 8px}
+.pp .acts .btn{padding:9px 8px;font-size:.76rem}
+.pp .acts .wallet{grid-column:1/-1}
+.pp .rows{padding:4px 16px 0;display:grid;gap:8px}
+.pp .rows div{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);border-radius:10px;padding:8px 10px}
+.pp .rows small{color:var(--ink-2)}
+.pp .rows span{font-weight:600;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:62%}
+.pp .ft{text-align:center;padding-top:14px;color:var(--ink-2)}
+
+/* app shell */
+.ah{background:var(--surface);border-bottom:1px solid var(--line);position:sticky;top:0;z-index:20}
+.ah .in{display:flex;align-items:center;gap:16px;padding:10px clamp(12px,2vw,24px);flex-wrap:wrap}
+.ah .wm{height:16px;color:var(--ink)}
+.ah .ws{font-size:.75rem;color:var(--ink-3);border-left:1px solid var(--line);padding-left:14px}
+.roles{display:flex;gap:4px;background:var(--surface-2);border-radius:10px;padding:3px;margin-left:auto;flex-wrap:wrap}
+.roles a{text-decoration:none;border-radius:8px;padding:6px 12px;font-size:.82rem;font-weight:600;color:var(--ink-2)}
+.roles a[aria-current="page"]{background:var(--ink);color:var(--bg)}
+.ah .back{font-size:.8rem;color:var(--ink-2);text-decoration:none}
+.shell{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 58px)}
+.side{border-right:1px solid var(--line);padding:18px 12px 28px;background:var(--surface);display:flex;flex-direction:column;gap:2px}
+.side a{text-decoration:none;padding:8px 10px;border-radius:8px;font-size:.9rem;color:var(--ink-2);font-weight:500;display:flex;justify-content:space-between;align-items:center}
+.side a[aria-current="page"]{background:var(--brand-soft);color:var(--brand-text);font-weight:700}
+.side .who{margin-top:auto;padding:12px 10px 0;font-size:.75rem;color:var(--ink-3);border-top:1px solid var(--line);display:grid;gap:8px}
+.side .who b{display:block;color:var(--ink);font-size:.85rem}
+.main{padding:26px clamp(16px,3vw,36px) 64px;min-width:0}
+.main>div>h1{font-family:var(--font);font-size:1.5rem;font-weight:700;letter-spacing:-.02em}
+.main .sub{color:var(--ink-2);font-size:.92rem;margin:4px 0 20px;max-width:52em}
+.kpis{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}
+.kpi{border:1px solid var(--line);border-radius:12px;padding:12px 14px;background:var(--surface)}
+.kpi small{display:block;font-size:.7rem;color:var(--ink-2);text-transform:uppercase;letter-spacing:.08em}
+.kpi b{font-size:1.5rem;font-weight:700;font-variant-numeric:tabular-nums}
+.tools{display:flex;gap:8px;margin-bottom:12px;flex-wrap:wrap}
+.tbl{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:12px}
+table{width:100%;border-collapse:collapse;font-size:.88rem}
+th{text-align:left;font-size:.7rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);padding:10px 12px;border-bottom:1px solid var(--line);white-space:nowrap}
+td{padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle;white-space:nowrap;font-variant-numeric:tabular-nums}
+tr:last-child td{border-bottom:0}
+td .av{margin-right:8px;vertical-align:middle}
+.checks{display:inline-flex;gap:5px}
+.checks i{width:18px;height:18px;border-radius:5px;display:inline-grid;place-items:center;font-size:.65rem;font-style:normal;font-weight:800;background:var(--surface-2);color:var(--ink-3)}
+.checks i.y{background:var(--ok-soft);color:var(--ok)}
+.panel{border:1px solid var(--line);border-radius:14px;padding:18px;background:var(--surface);display:grid;gap:12px;align-content:start}
+.panel>h4{font-size:.74rem;text-transform:uppercase;letter-spacing:.08em;color:var(--ink-2);display:flex;justify-content:space-between;align-items:center;gap:8px}
+.panel>h4 button{border:0;background:transparent;color:var(--brand-text);font-weight:700;font-size:.74rem;padding:0;text-transform:none;letter-spacing:0}
+.cols{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.cols.w{grid-template-columns:1.2fr .8fr}
+.swatches{display:flex;gap:8px;flex-wrap:wrap}
+.swatches i{width:36px;height:36px;border-radius:8px;display:block;border:1px solid var(--line)}
+.tpl{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}
+.tpl button{aspect-ratio:1.586;border-radius:8px;background:#111;position:relative;overflow:hidden;border:2px solid var(--line);padding:0}
+.tpl button[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 2px var(--brand-soft)}
+.tpl button::after{content:"";position:absolute;right:-20%;bottom:-40%;width:80%;aspect-ratio:100/37.3;background:var(--t-aqua);border-radius:50% 50% 0 0}
+.tpl .t2{background:var(--t-aqua)}.tpl .t2::after{background:#111}
+.tpl .t3{background:var(--t-paper)}.tpl .t3::after{background:#111}
+.tog{display:flex;justify-content:space-between;align-items:center;gap:12px;font-size:.92rem;padding-block:4px}
+.tog input{width:18px;height:18px;accent-color:var(--brand)}
+.login{display:grid;place-items:center;min-height:calc(100vh - 58px);padding:24px;background:radial-gradient(60% 50% at 80% 100%,var(--brand-soft),transparent 70%)}
+.login form{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:28px;width:min(380px,100%);display:grid;gap:12px}
+.login .wm{color:var(--ink);height:18px}
+
+/* employee */
+.emp{display:grid;grid-template-columns:minmax(260px,340px) 1fr;gap:20px;align-items:start}
+.photo{display:flex;align-items:center;gap:12px}
+.photo .av{width:56px;height:56px;font-size:1rem}
+.lock{font-family:var(--mono);font-weight:400;font-size:.64rem;letter-spacing:.06em;color:var(--ink-3)}
+.field[readonly]{background:var(--surface-2);color:var(--ink-2)}
+.cardwrap{perspective:1200px;cursor:pointer;max-width:440px}
+.cardwrap .flip{position:relative;transition:transform .6s;transform-style:preserve-3d}
+.cardwrap.flipped .flip{transform:rotateY(180deg)}
+.cardwrap .nfc{backface-visibility:hidden;font-size:12px}
+.cardwrap .nfc.back{position:absolute;inset:0;transform:rotateY(180deg)}
+.row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+
+/* signatures */
+.sigs{display:grid;grid-template-columns:repeat(auto-fit,minmax(270px,1fr));gap:14px}
+.sigopt{border:2px solid var(--line);border-radius:14px;background:#fff;color:#111;padding:0;text-align:left;display:flex;flex-direction:column;overflow:hidden}
+.sigopt[aria-pressed="true"]{border-color:var(--brand);box-shadow:0 0 0 3px var(--brand-soft)}
+.sigopt .cap{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;background:var(--surface-2);color:var(--ink);font-size:.78rem;font-weight:700;border-bottom:1px solid var(--line)}
+.sig{padding:14px;font-size:.78rem;line-height:1.4;display:grid;gap:8px;flex:1;align-content:start;overflow-wrap:anywhere;min-width:0}
+.sig .top>div{min-width:0}
+.sig .wm{flex:none}
+.sig b.n{font-size:.98rem;display:block}
+.sig .l{color:#555;display:block}
+.sig .l u{color:#0B6359;text-decoration:none}
+.sig .wm{height:12px;color:#111}
+.sig .pwr{color:#777;font-size:.62rem}
+.sig .pwr .rn b{background:#2447F9;color:#fff}
+.sig.classic .top{display:flex;gap:12px;align-items:center}
+.sig.classic .av{width:52px;height:52px;border-radius:10px;font-size:.95rem}
+.sig.compact .top{display:flex;gap:12px;align-items:stretch}
+.sig.compact .top .wm{height:14px;align-self:center}
+.sig.compact .rule{width:2px;background:#00CC88;border-radius:2px}
+.sig.banner .bn{background:#111;color:#F8F8F0;border-radius:8px;padding:10px 12px;display:flex;justify-content:space-between;align-items:center;gap:10px;position:relative;overflow:hidden;font-weight:700}
+.sig.banner .bn .wm{color:#F8F8F0;height:10px;flex:none}
+.sig.banner .bn span{position:relative;z-index:1;font-size:.74rem}
+
+/* generated assets */
+.vbg{aspect-ratio:16/9;background:#111 var(--tile);background-size:24px 24px;color:#F8F8F0;position:relative;border-radius:10px;overflow:hidden}
+.vbg::after{content:"";position:absolute;inset:0;background:linear-gradient(115deg,#111 40%,transparent 100%)}
+.vbg>*{z-index:1}
+.vbg .arc{position:absolute;right:-6%;bottom:-18%;width:46%;color:var(--t-aqua)}
+.vbg .wm{position:absolute;left:6%;top:9%;height:11%}
+.vbg .who{position:absolute;left:6%;bottom:10%;font-size:.72rem;line-height:1.25}
+.vbg .who b{display:block;font-size:1.05rem}
+.vbg .pwr{position:absolute;right:4%;top:8%;color:#F8F8F0;font-size:.6rem}
+.cover{aspect-ratio:4/1;background:var(--t-aqua);color:#111;position:relative;overflow:hidden;border-radius:10px}
+.cover .wm{position:absolute;left:4%;top:50%;transform:translateY(-50%);height:22%}
+.cover .tag{position:absolute;right:4%;top:40%;transform:translateY(-50%);font-weight:700;font-size:clamp(.62rem,1.2vw,.9rem);text-align:right;max-width:44%;line-height:1.15}
+.cover .arc{position:absolute;left:38%;top:-40%;width:24%;color:#111}
+.cover .pwr{position:absolute;right:4%;bottom:8%;color:#111;font-size:.58rem}
+.cover .pwr .rn b,.crt.t2 .pwr .rn b,.crt.t3 .pwr .rn b{background:#111;color:#fff}
+
+/* campaigns */
+.feed{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:18px}
+.camp{background:var(--surface);border:1px solid var(--line);border-radius:16px;overflow:hidden;display:flex;flex-direction:column}
+.camp .body{padding:14px;display:grid;gap:10px}
+.camp h3{font-size:1rem;display:flex;justify-content:space-between;gap:8px;align-items:center}
+.camp .meta{font-size:.76rem;color:var(--ink-3)}
+.crt{aspect-ratio:1.91;background:#111;color:#F8F8F0;position:relative;overflow:hidden;padding:6%}
+.crt .wm{height:9%;min-height:10px}
+.crt h5{margin:0;position:absolute;left:6%;bottom:14%;max-width:62%;font-family:var(--display);font-size:clamp(1rem,2.2vw,1.35rem);font-weight:800;letter-spacing:-.02em;line-height:1.05;z-index:1}
+.crt .arc{position:absolute;right:-14%;bottom:-30%;width:62%;color:var(--t-aqua)}
+.crt .pwr{position:absolute;left:6%;bottom:4%;font-size:.56rem;z-index:1}
+.crt.t2{background:var(--t-aqua);color:#111}.crt.t2 .arc{color:#111}
+.crt.t3{background:var(--t-paper);color:#111}.crt.t3 .arc{color:var(--t-aqua)}
+.crt.t1 .pwr .rn b{background:#fff;color:#111}
+.sh-btns{display:flex;gap:6px;flex-wrap:wrap}
+.chs{display:flex;gap:6px;flex-wrap:wrap}
+.chs label{border:1px solid var(--line-2);border-radius:999px;padding:4px 10px;font-size:.8rem;display:inline-flex;gap:6px;align-items:center;cursor:pointer}
+.chs input{accent-color:var(--brand)}
+.top5{display:grid;gap:8px;font-size:.88rem}
+.top5 div{display:flex;align-items:center;gap:8px}
+.top5 span:last-child{margin-left:auto;font-variant-numeric:tabular-nums;font-weight:700}
+
+/* public card page */
+.pub{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:center}
+.pub .stage{display:grid;place-items:center;padding:12px}
+.pub .phone{width:min(280px,100%)}
+
+/* wallet pass */
+.pass{background:var(--t-black);color:var(--t-paper);border-radius:18px;padding:18px;display:grid;gap:14px;text-align:left;position:relative;overflow:hidden;width:min(300px,100%);margin-inline:auto}
+.pass .wm{height:14px}
+.pass .arc{position:absolute;right:-20%;top:-6%;width:60%;color:var(--t-aqua);transform:rotate(180deg)}
+.pass small{display:block;font-size:.62rem;letter-spacing:.1em;text-transform:uppercase;opacity:.6}
+.pass b{font-size:1.1rem}
+.pass .two{display:grid;grid-template-columns:1fr 1fr;gap:10px;font-size:.82rem}
+.pass .qrbig{width:132px;height:132px;padding:8px;border-radius:10px;background:#fff;margin:4px auto 0}
+.pass .tap{text-align:center;font-family:var(--mono);font-size:.68rem;letter-spacing:.1em;opacity:.7}
+.pass .pwr{justify-content:center;color:var(--t-paper)}
+.pass .pwr .rn b{background:#fff;color:#111}
+
+/* modal + toast */
+.modal{position:fixed;inset:0;background:rgba(5,8,20,.6);display:none;place-items:center;z-index:50;padding:16px;overflow:auto}
+.modal.on{display:grid}
+.modal .box{background:var(--surface);color:var(--ink);border-radius:18px;padding:24px;width:min(420px,100%);display:grid;gap:14px;text-align:center}
+.modal h3{font-size:1.1rem}
+.modal .qrbig.solo{width:180px;height:180px;margin:0 auto;background:#fff;padding:12px;border-radius:12px}
+.modal .link{display:flex;gap:8px}
+.modal .link .field{font-family:var(--mono);font-size:.78rem}
+.toast{position:fixed;left:50%;bottom:24px;transform:translate(-50%,20px);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:999px;font-size:.85rem;font-weight:600;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:calc(100% - 32px);text-align:center}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+@media (max-width:960px){
+  .hero,.demo,.pub,.emp,.cols,.cols.w{grid-template-columns:1fr}
+  .stack{height:300px;max-width:520px}
+  .g3,.plain,.plans{grid-template-columns:1fr}
+  .flow,.kpis,.feat .items,.g2{grid-template-columns:1fr 1fr}
+  .feat{grid-template-columns:1fr;gap:16px}
+  .sf .g{grid-template-columns:1fr 1fr}
+  .shell{grid-template-columns:1fr}
+  .side{flex-direction:row;flex-wrap:wrap;border-right:0;border-bottom:1px solid var(--line);padding:8px}
+  .side .who{display:none}
+  .sh .r{margin-left:0}
+}
+@media (max-width:560px){.flow,.kpis,.feat .items,.g2,.sf .g{grid-template-columns:1fr}.band{padding:26px}}
+@media (prefers-reduced-motion:reduce){.cardwrap .flip,.toast{transition:none}html{scroll-behavior:auto}}
+</style>
+
+<svg style="position:absolute;width:0;height:0;overflow:hidden" aria-hidden="true"><symbol id="wp-wm" viewBox="0 0 1000 168.19"><path fill="currentColor" d="M10.15 148.18H16.43V153.25H10.15ZM13.97 154.89C16.90 154.65 18.47 153.03 18.47 150.71C18.47 148.10 16.94 146.49 13.60 146.49L8.11 146.49L8.11 160.27L10.15 160.27L10.15 153.39L15.34 160.27L17.77 160.27L13.53 154.89L13.97 154.89"/><path fill="currentColor" d="M10.36 148.39H16.22V153.03H10.36ZM15.45 160.06L17.34 160.06L13.10 154.68L13.96 154.68C16.70 154.46 18.26 153.01 18.26 150.71C18.26 148.09 16.65 146.70 13.60 146.70L8.32 146.70L8.32 160.06L9.94 160.06L9.94 147.97L16.64 147.97L16.64 153.46L10.46 153.46L15.45 160.06M18.21 160.48L15.24 160.48L10.36 154.02L10.36 160.48L7.90 160.48L7.90 146.28L13.60 146.28C16.88 146.28 18.69 147.85 18.69 150.71C18.69 153.22 16.93 154.86 13.99 155.10L13.97 155.10L18.21 160.48"/><path fill="currentColor" d="M12.67 142.48C6.66 142.48 1.77 147.37 1.77 153.38C1.77 159.39 6.66 164.27 12.67 164.27C18.68 164.27 23.56 159.39 23.56 153.38C23.56 147.37 18.68 142.48 12.67 142.48M12.67 165.82C5.81 165.82 0.22 160.24 0.22 153.38C0.22 146.52 5.81 140.94 12.67 140.94C19.53 140.94 25.11 146.52 25.11 153.38C25.11 160.24 19.53 165.82 12.67 165.82"/><path fill="currentColor" d="M12.67 142.71C6.78 142.71 2.00 147.49 2.00 153.38C2.00 159.26 6.78 164.05 12.67 164.05C18.55 164.05 23.34 159.26 23.34 153.38C23.34 147.49 18.55 142.71 12.67 142.71M12.67 164.50C6.54 164.50 1.55 159.51 1.55 153.38C1.55 147.25 6.54 142.26 12.67 142.26C18.80 142.26 23.79 147.25 23.79 153.38C23.79 159.51 18.80 164.50 12.67 164.50M12.67 141.16C5.93 141.16 0.45 146.64 0.45 153.38C0.45 160.11 5.93 165.60 12.67 165.60C19.40 165.60 24.89 160.11 24.89 153.38C24.89 146.64 19.40 141.16 12.67 141.16M12.67 166.05C5.68 166.05 0.00 160.36 0.00 153.38C0.00 146.39 5.68 140.71 12.67 140.71C19.65 140.71 25.34 146.39 25.34 153.38C25.34 160.36 19.65 166.05 12.67 166.05"/><path fill="currentColor" d="M181.78 117.08L158.58 14.39L109.87 14.39L82.76 137.03L58.41 14.39L25.55 14.39L57.03 166.17L108.26 166.17L134.22 43.79L160.65 166.17L192.35 166.17L183.39 124.26L212.11 124.26L242.21 14.39L210.04 14.39L181.78 117.08"/><path fill="currentColor" d="M385.11 14.49H417.05V166.17H385.11Z"/><path fill="currentColor" d="M518.36 136.36L518.35 139.49L518.35 139.50L469.11 139.50L469.11 82.78L518.35 82.78L518.35 82.79L518.36 82.79L518.36 136.36M494.25 54.10C462.08 54.10 437.03 79.21 437.03 111.26C437.03 143.76 458.87 167.96 491.25 167.96C494.01 167.96 497.00 167.74 499.99 167.29L518.36 139.55L518.36 166.17L550.30 166.17L550.30 54.10L494.25 54.10"/><path fill="currentColor" d="M325.74 136.36L325.73 139.49L325.73 139.50L276.48 139.50L276.48 82.78L325.73 82.78L325.73 82.79L325.74 82.79L325.74 136.36M301.62 54.10C269.46 54.10 244.41 79.21 244.41 111.26C244.41 143.76 266.24 167.96 298.63 167.96C301.39 167.96 304.37 167.74 307.36 167.29L325.74 139.55L325.74 166.17L357.68 166.17L357.68 54.10L301.62 54.10"/><path fill="currentColor" d="M667.03 90.87L612.58 90.87L612.58 90.86L612.56 90.86L612.56 43.12L612.58 43.12L612.58 43.10L667.03 43.10L667.03 90.87M642.66 14.43L580.40 14.43L580.40 166.20L612.56 166.20L612.56 91.99L628.41 119.55L642.66 119.55C675.74 119.55 699.64 98.48 699.64 67.33C699.64 36.40 675.74 14.43 642.66 14.43"/><path fill="currentColor" d="M721.23 14.39H753.17V166.17H721.23Z"/><path fill="currentColor" d="M810.44 139.53L855.85 139.53L838.64 165.27C834.50 167.07 829.45 168.19 822.56 168.19C795.21 168.19 778.44 151.38 778.44 124.71L778.44 54.09L810.38 54.09L810.38 115.74C810.38 116.38 810.40 117.01 810.44 117.63L810.44 139.53"/><path fill="currentColor" d="M855.87 54.10H887.81V166.17H855.87Z"/><path fill="currentColor" d="M971.87 127.74L971.41 127.59C971.69 127.65 971.90 127.70 971.90 127.70C971.90 127.70 971.89 127.71 971.87 127.74M937.11 92.31L937.15 92.33C937.14 92.32 937.12 92.32 937.11 92.32L937.11 92.31M966.61 98.70L946.62 94.45C943.40 93.75 940.98 93.18 939.36 92.81L939.36 77.51L990.28 77.51L990.28 58.14C982.46 53.87 973.04 52.09 960.63 52.09C927.78 52.09 909.86 64.63 909.86 87.50C909.86 104.99 919.74 116.19 939.04 120.44L960.41 125.15C964.18 125.97 967.60 126.74 969.71 127.21L969.71 142.54L910.78 142.54L910.78 162.14C921.35 165.94 932.61 168.19 946.85 168.19C980.39 168.19 997.17 156.53 997.17 131.43C997.17 111.48 986.37 102.97 966.61 98.70"/><path fill="currentColor" d="M855.87 139.51L855.87 139.53L855.86 139.53L855.87 139.51"/><path fill="#00FFA8" d="M955.26 32.50C940.35 32.12 925.41 26.60 912.81 16.75L925.42 0.63C935.30 8.36 947.01 12.42 958.35 12.04C969.02 11.69 978.09 7.41 983.89 0.00L1000.00 12.60C990.41 24.87 975.85 31.93 959.02 32.49C957.77 32.53 956.52 32.53 955.26 32.50"/></symbol><symbol id="wp-arc" viewBox="0 0 100 37.31"><path fill="currentColor" d="M48.69 37.28C31.59 36.84 14.45 30.51 0.00 19.21L14.46 0.72C25.79 9.59 39.22 14.24 52.23 13.81C64.47 13.41 74.87 8.50 81.52 0.00L100.00 14.45C89.00 28.53 72.30 36.63 53.00 37.26C51.57 37.31 50.13 37.31 48.69 37.28"/></symbol></svg>
+
+<!-- ======================= WEBSITE ======================= -->
+<div data-site>
+<header class="sh"><div class="wrap">
+  <a class="rn" href="#/" aria-label="ReachN home">Reach<b>N</b></a>
+  <nav aria-label="Main">
+    <a href="#/" data-nav="home">Product</a>
+    <a href="#/features" data-nav="features">Features</a>
+    <a href="#/pricing" data-nav="pricing">Pricing</a>
+    <a href="#/faq" data-nav="faq">FAQ</a>
+  </nav>
+  <div class="r"><a class="btn ghost sm" href="#/app/login">Sign in</a><a class="btn pri sm" href="#/demo">Book a demo</a></div>
+</div></header>
+
+<!-- HOME -->
+<main data-page="home"><div class="wrap">
+  <div class="hero">
+    <div>
+      <p class="eyebrow">Employee brand platform</p>
+      <h1 style="margin-top:14px">Your brand, in every <i>handshake.</i></h1>
+      <p class="lede">ReachN gives every employee an NFC business card, a contact card in their phone wallet, an on-brand email signature, and company campaigns they can share in one tap. HR runs all of it from one dashboard.</p>
+      <div class="cta"><a class="btn pri" href="#/demo">Book a demo</a><a class="btn ghost" href="#/app/login">Try the live product →</a></div>
+      <div class="assets"><span>NFC card + QR</span><span>Digital contact card</span><span>Wallet pass</span><span>Email signature</span><span>Virtual background</span><span>Cover banner</span><span>Campaign sharing</span></div>
+    </div>
+    <div class="stack" aria-hidden="true">
+      <div class="phone"><div class="scr"><div class="notch"></div><div class="pp" data-pp></div></div></div>
+      <div class="nfc" data-nfc-front></div>
+    </div>
+  </div>
+
+  <section class="sec">
+    <div class="sec-h"><p class="eyebrow">The problem</p><h2>A brand lives or dies at the employee level.</h2><p>The website gets the rebrand. The ads get the rebrand. Then an employee sends an email with the old logo, joins a call with a bedroom behind them, and hands over a card with a dead phone number.</p></div>
+    <div class="plain">
+      <div><b>Five touchpoints, zero control</b><p>Signatures, backgrounds, covers and cards are made by each employee. Nobody checks them and nobody can update them.</p></div>
+      <div><b>Plastic that expires</b><p>A new title, a new number, a new logo. Each change means another print run and a box of cards in the bin.</p></div>
+      <div><b>Campaigns nobody shares</b><p>Marketing posts the launch. Employees would share it, but the creative is buried in a chat thread and the caption is theirs to write.</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><p class="eyebrow">The product</p><h2>One profile per employee. Everything else is generated.</h2></div>
+    <div class="g3">
+      <div class="tile"><span class="k">Identity</span><h3>A card that never goes out of date</h3><p>An NFC card with a QR code opens the employee's live contact card. The same card sits in Apple Wallet and Google Wallet. Change a phone number once and every copy follows.</p><a class="more" href="#/app/card">See the contact card →</a></div>
+      <div class="tile"><span class="k">Brand kit</span><h3>Signature, background, cover</h3><p>Built from your logo, colors and templates. Employees pick one of three signature layouts. They can't pick the wrong logo.</p><a class="more" href="#/app/me/kit">See the brand kit →</a></div>
+      <div class="tile"><span class="k">Campaigns</span><h3>Your team as a media channel</h3><p>HR or Marketing pushes a creative and a caption. Every employee gets it with a Share button for LinkedIn, X and WhatsApp.</p><a class="more" href="#/app/me/campaigns">See campaign sharing →</a></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="sec-h"><p class="eyebrow">How it works</p><h2>Live for the whole company in a week.</h2></div>
+    <div class="flow">
+      <div><b>Load your brand</b><p>Upload the logo, set the colors, choose a card template. This is the single source for every asset.</p></div>
+      <div><b>Import the roster</b><p>HR uploads names, titles, work emails and phones, or syncs from the HR system.</p></div>
+      <div><b>Employees finish in two minutes</b><p>They sign in, add a photo and a LinkedIn URL, check their number, choose a signature.</p></div>
+      <div><b>Cards ship, kits go live</b><p>NFC cards are printed once. Everything digital is ready the moment the profile is saved.</p></div>
+    </div>
+  </section>
+
+  <section class="sec">
+    <div class="g2">
+      <div class="tile"><span class="k">For HR and Marketing</span><h3>Control without chasing people</h3><ul class="ul" style="margin-top:6px"><li>Super admin role with the full roster and kit status</li><li>Decide which fields employees may edit</li><li>Push campaigns and see who shared</li><li>Order and track NFC card batches</li><li>Onboard a new hire with a complete kit on day one</li></ul></div>
+      <div class="tile"><span class="k">For employees</span><h3>Look the part without opening a design tool</h3><ul class="ul" style="margin-top:6px"><li>Edit name, photo, phone and LinkedIn yourself</li><li>Share your contact by tap, QR, link or wallet</li><li>Copy a finished email signature into Gmail or Outlook</li><li>Download your virtual background and cover</li><li>Share company news with one button</li></ul></div>
+    </div>
+  </section>
+
+  <section class="sec"><div class="band"><h2>See your own brand on the card before you decide.</h2><a class="btn" href="#/demo">Book a demo</a></div></section>
+</div></main>
+
+<!-- FEATURES -->
+<main data-page="features" hidden><div class="wrap">
+  <div class="page-h"><p class="eyebrow">Features</p><h1>Everything an employee carries, from one source.</h1><p>Each feature below is live in the product. Follow the links to try it with sample data.</p></div>
+
+  <div class="feat"><div><p class="eyebrow">Identity</p><h2 style="margin-top:8px">Cards and contact sharing</h2></div><div class="items">
+    <div><b>NFC card with QR code</b><p>A printed card in your brand. Tap it on a phone or scan the QR. Both open the same live contact card, and no app is needed.</p><a href="#/app/me/profile">Open in product →</a></div>
+    <div><b>Digital contact card</b><p>The same design as the plastic card, as a web page. Visitors save the contact in one tap or send their own details back.</p><a href="#/app/card">Open in product →</a></div>
+    <div><b>Add to Wallet <span class="pill new">New</span></b><p>Employees keep their card in Apple Wallet or Google Wallet and share it by NFC or QR, even when the plastic card is at home.</p><a href="#/app/card">Open in product →</a></div>
+    <div><b>Employee card</b><p>A card image designed automatically from the employee's data and your identity. Shared as an image with a link.</p><a href="#/app/me/profile">Open in product →</a></div>
+  </div></div>
+
+  <div class="feat"><div><p class="eyebrow">Brand kit</p><h2 style="margin-top:8px">Assets generated per employee</h2></div><div class="items">
+    <div><b>Email signature, three layouts <span class="pill new">New</span></b><p>Classic, Compact or Banner. Each employee picks one. All three use the same data and the same logo.</p><a href="#/app/me/kit">Open in product →</a></div>
+    <div><b>Virtual background</b><p>A 1920×1080 background for Zoom, Meet and Teams with the employee's name and title in the corner.</p><a href="#/app/me/kit">Open in product →</a></div>
+    <div><b>Cover banner</b><p>A LinkedIn-size cover with your wordmark and tagline. One download, correct dimensions.</p><a href="#/app/me/kit">Open in product →</a></div>
+    <div><b>Brand identity source</b><p>Logo, colors, templates and company details are set once by the admin and applied to every asset.</p><a href="#/app/admin/brand">Open in product →</a></div>
+  </div></div>
+
+  <div class="feat"><div><p class="eyebrow">Campaigns</p><h2 style="margin-top:8px">Company campaign sharing <span class="pill new">New</span></h2></div><div class="items">
+    <div><b>Push a campaign</b><p>HR or Marketing uploads the creative, writes the caption, selects the channels and pushes it to every employee.</p><a href="#/app/admin/campaigns">Open in product →</a></div>
+    <div><b>Share with a button</b><p>Employees see each campaign in their feed. They can adjust the caption, then share to LinkedIn, X or WhatsApp.</p><a href="#/app/me/campaigns">Open in product →</a></div>
+    <div><b>Know what worked</b><p>Shares and estimated reach per campaign, plus the employees who shared the most.</p><a href="#/app/admin/campaigns">Open in product →</a></div>
+    <div><b>Campaign banner in signatures</b><p>The Banner signature layout carries the current campaign line under every email the company sends.</p><a href="#/app/me/kit">Open in product →</a></div>
+  </div></div>
+
+  <div class="feat"><div><p class="eyebrow">Administration</p><h2 style="margin-top:8px">Built for HR</h2></div><div class="items">
+    <div><b>Login and roles</b><p>Employees sign in with their work account. The super admin role belongs to HR and sees the whole company.</p><a href="#/app/login">Open in product →</a></div>
+    <div><b>Roster and kit status</b><p>See who is complete, who is missing a photo, and whose card has shipped. Remind everyone incomplete in one action.</p><a href="#/app/admin/employees">Open in product →</a></div>
+    <div><b>Edit permissions</b><p>Employees edit name, photo, phone and LinkedIn. Title, company and email stay with HR.</p><a href="#/app/admin/settings">Open in product →</a></div>
+    <div><b>Card orders</b><p>Group employees into print batches and track each batch from ready to delivered.</p><a href="#/app/admin/orders">Open in product →</a></div>
+  </div></div>
+
+  <div class="feat"><div><p class="eyebrow">Attribution</p><h2 style="margin-top:8px">Powered by ReachN <span class="pill new">New</span></h2></div><div class="items">
+    <div><b>On every shared material</b><p>A small "Powered by ReachN" mark appears on the contact card, wallet pass, signature, virtual background, cover and campaign creatives.</p><a href="#/app/me/kit">Open in product →</a></div>
+    <div><b>On print too</b><p>The mark is printed on the back of each NFC card, below your wordmark.</p><a href="#/app/me/profile">Open in product →</a></div>
+  </div></div>
+</div></main>
+
+<!-- PRICING -->
+<main data-page="pricing" hidden><div class="wrap">
+  <div class="page-h"><p class="eyebrow">Pricing</p><h1>Priced per employee. Cards are bought once.</h1><p>Billed annually in Saudi riyals. NFC cards are a one-time cost and keep working when details change. <span class="pill warn">Draft pricing</span></p></div>
+  <div class="plans" style="margin-top:32px">
+    <div class="plan"><h3>Starter</h3><p class="muted">Teams up to 50 that need cards and signatures.</p><div class="price">SAR 9 <small>per employee / month</small></div><ul class="ul"><li>Digital contact card + QR</li><li>Add to Wallet</li><li>Email signature, 3 layouts</li><li>Virtual background and cover</li><li>1 admin</li></ul><a class="btn ghost" href="#/demo">Start with Starter</a></div>
+    <div class="plan hot"><h3>Business <span class="pill new">Most chosen</span></h3><p class="muted">Companies that want the brand kit and campaigns.</p><div class="price">SAR 15 <small>per employee / month</small></div><ul class="ul"><li>Everything in Starter</li><li>Campaign sharing with analytics</li><li>Roster import and kit status</li><li>Edit permissions per field</li><li>Card order tracking</li><li>5 admins</li></ul><a class="btn pri" href="#/demo">Book a demo</a></div>
+    <div class="plan"><h3>Enterprise</h3><p class="muted">Groups with several brands or more than 500 people.</p><div class="price">Custom</div><ul class="ul"><li>Everything in Business</li><li>Single sign-on and HR system sync</li><li>Multiple brands in one account</li><li>Arabic and English assets</li><li>Dedicated onboarding</li></ul><a class="btn ghost" href="#/demo">Talk to us</a></div>
+  </div>
+  <section class="sec" style="margin-top:48px"><div class="g2">
+    <div class="tile"><span class="k">One-time</span><h3>NFC cards: SAR 35 per card</h3><p>Printed in your template with QR code. Minimum order 25 cards. Replacement cards at the same price.</p></div>
+    <div class="tile"><span class="k">Attribution</span><h3>Powered by ReachN</h3><p>All plans carry a small "Powered by ReachN" mark on shared materials, digital and printed.</p></div>
+  </div></section>
+</div></main>
+
+<!-- FAQ -->
+<main data-page="faq" hidden><div class="wrap">
+  <div class="page-h"><p class="eyebrow">FAQ</p><h1>Questions HR and IT ask first.</h1></div>
+  <div style="margin-top:32px;max-width:820px">
+    <details open><summary>Does the person receiving my card need an app?</summary><p>No. Tapping the NFC card or scanning the QR opens a web page in their browser. They save the contact from there.</p></details>
+    <details><summary>What happens when an employee changes title or phone number?</summary><p>HR or the employee updates the profile. The contact card, wallet pass, signature and downloads update from the same record. The printed card keeps working because it only stores the link.</p></details>
+    <details><summary>What happens when someone leaves the company?</summary><p>The admin deactivates the profile. The card and link stop showing contact details immediately and can be reassigned.</p></details>
+    <details><summary>How does Add to Wallet work?</summary><p>The employee taps "Add to Apple Wallet" or "Add to Google Wallet" on their card. The pass holds their name, title and QR code, and updates when the profile changes.</p></details>
+    <details><summary>Can employees change the design?</summary><p>No. They choose between three approved signature layouts and edit their own details. Logo, colors and templates belong to the admin.</p></details>
+    <details><summary>How do campaigns reach employees?</summary><p>The admin pushes a campaign from the dashboard. It appears in each employee's campaign feed with the creative, the caption and Share buttons. Sharing is always the employee's choice.</p></details>
+    <details><summary>Can the "Powered by ReachN" mark be removed?</summary><p>It is included on all plans. It is small, sits at the edge of each asset, and never replaces your logo.</p></details>
+    <details><summary>Which email clients do signatures work in?</summary><p>Gmail, Outlook and Apple Mail. The employee copies the signature and pastes it into the client's settings.</p></details>
+  </div>
+</div></main>
+
+<!-- DEMO -->
+<main data-page="demo" hidden><div class="wrap">
+  <div class="page-h"><p class="eyebrow">Book a demo</p><h1>See ReachN with your logo on it.</h1></div>
+  <div class="demo" style="margin-top:32px">
+    <div style="display:grid;gap:18px">
+      <p class="muted" style="font-size:1.05rem">Send us your company name and headcount. We prepare a sample card, signature and campaign in your brand and walk you through the admin in 30 minutes.</p>
+      <ul class="ul"><li>Sample kit in your identity before the call</li><li>Rollout plan for your headcount</li><li>Quote for platform and NFC cards</li></ul>
+      <p class="muted">Prefer email? <span class="mono">hello@reachn.com</span></p>
+    </div>
+    <form id="demoform">
+      <label class="f">Full name<input class="field" id="d-name" required autocomplete="name"></label>
+      <label class="f">Work email<input class="field" id="d-email" type="email" required autocomplete="email"></label>
+      <label class="f">Company<input class="field" id="d-company" required autocomplete="organization"></label>
+      <label class="f">Number of employees<select class="field" id="d-size"><option>1 to 50</option><option>51 to 200</option><option>201 to 500</option><option>More than 500</option></select></label>
+      <label class="f">What do you want to solve?<textarea class="field" id="d-msg" placeholder="Rebrand rollout, business cards, signatures, campaigns"></textarea></label>
+      <button class="btn pri" type="submit">Request a demo</button>
+      <p class="muted" style="font-size:.78rem">We reply within one business day.</p>
+    </form>
+  </div>
+</div></main>
+
+<footer class="sf"><div class="wrap">
+  <div class="g">
+    <div><span class="rn">Reach<b>N</b></span><p class="muted" style="margin-top:10px;max-width:24em;font-size:.92rem">The employee brand platform. Cards, signatures and campaigns from one profile.</p></div>
+    <div><h4>Product</h4><a href="#/">Overview</a><a href="#/features">Features</a><a href="#/pricing">Pricing</a></div>
+    <div><h4>Try it</h4><a href="#/app/admin/employees">HR admin</a><a href="#/app/me/profile">Employee portal</a><a href="#/app/card">Contact card</a></div>
+    <div><h4>Company</h4><a href="#/faq">FAQ</a><a href="#/demo">Book a demo</a><a href="#/app/login">Sign in</a></div>
+  </div>
+  <p class="legal">© 2026 ReachN. Product pages use sample data.</p>
+</div></footer>
+</div>
+
+<!-- ======================= APP ======================= -->
+<div data-app hidden>
+<header class="ah"><div class="in">
+  <svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg>
+  <span class="ws">WalaPlus workspace</span>
+  <nav class="roles" aria-label="Role">
+    <a href="#/app/login" data-rolenav="login">Login</a>
+    <a href="#/app/admin/employees" data-rolenav="admin">HR super admin</a>
+    <a href="#/app/me/profile" data-rolenav="me">Employee</a>
+    <a href="#/app/card" data-rolenav="card">Public card</a>
+  </nav>
+  <a class="back" href="#/">← reachn.com</a>
+</div></header>
+
+<!-- LOGIN -->
+<div data-role="login" class="login">
+  <form id="loginform">
+    <svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg>
+    <p class="muted" style="font-size:.9rem">Sign in with your work account.</p>
+    <label class="f">Work email<input class="field" id="login-email" value="s.alotaibi@walaplus.com" autocomplete="off"></label>
+    <label class="f">Password<input class="field" id="login-pass" type="password" value="sample-only" autocomplete="off"></label>
+    <a class="btn pri" href="#/app/admin/employees">Sign in as HR super admin</a>
+    <a class="btn ghost" href="#/app/me/profile">Sign in as employee</a>
+    <p class="muted" style="font-size:.78rem;text-align:center">Super admin (HR) manages everyone. Employees see only their own profile.</p>
+    <div style="text-align:center"><span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span></div>
+  </form>
+</div>
+
+<!-- ADMIN -->
+<div data-role="admin" class="shell" hidden>
+  <nav class="side" aria-label="Admin">
+    <a href="#/app/admin/employees" data-subnav="employees">Employees</a>
+    <a href="#/app/admin/brand" data-subnav="brand">Brand identity</a>
+    <a href="#/app/admin/campaigns" data-subnav="campaigns">Campaigns <span class="pill new">New</span></a>
+    <a href="#/app/admin/orders" data-subnav="orders">Card orders</a>
+    <a href="#/app/admin/settings" data-subnav="settings">Settings</a>
+    <div class="who"><div><b>Sara Al-Otaibi</b>Super admin · HR</div><span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span></div>
+  </nav>
+  <div class="main">
+    <div data-sub="employees">
+      <h1>Employees</h1><p class="sub">Roster imported from HR. Kit status is tracked per employee.</p>
+      <div class="kpis"><div class="kpi"><small>Employees</small><b>184</b></div><div class="kpi"><small>Kits complete</small><b>131</b></div><div class="kpi"><small>Missing photo</small><b>41</b></div><div class="kpi"><small>Cards shipped</small><b>96</b></div></div>
+      <div class="tools"><input class="field" style="max-width:260px" placeholder="Search employees" id="adm-search" aria-label="Search employees"><button class="btn sm" type="button" data-toast="Roster import opens here: CSV upload or HR system sync">Import roster</button><button class="btn ghost sm" type="button" data-toast="Reminder sent to 41 employees missing a photo">Remind incomplete</button><button class="btn ghost sm" type="button" data-toast="53 cards added to the next print batch">Order cards</button></div>
+      <div class="tbl"><table><thead><tr><th>Employee</th><th>Title</th><th>Photo · Email · Phone · LinkedIn</th><th>Kit</th><th>Wallet</th><th>NFC card</th><th></th></tr></thead><tbody id="roster"></tbody></table></div>
+    </div>
+
+    <div data-sub="brand" hidden>
+      <h1>Brand identity</h1><p class="sub">Loaded once. Every generated asset reads from here.</p>
+      <div class="cols">
+        <div class="panel"><h4>Logo</h4><div style="background:#111;color:#F8F8F0;padding:16px;border-radius:8px"><svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg></div><div style="background:#00FFA8;color:#111;padding:16px;border-radius:8px"><svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg></div></div>
+        <div class="panel"><h4>Colors</h4><div class="swatches"><i style="background:#111"></i><i style="background:#00FFA8"></i><i style="background:#F8F8F0"></i><i style="background:#0B6359"></i><i style="background:#F032A2"></i><i style="background:#8D63F1"></i></div><p class="muted" style="font-size:.85rem">Black · Aquamarine · Off-white · Deep aqua · Secondary accents</p></div>
+        <div class="panel"><h4>Card template</h4><div class="tpl"><button type="button" class="t1" data-tpl="t1" aria-pressed="true" aria-label="Black template"></button><button type="button" class="t2" data-tpl="t2" aria-pressed="false" aria-label="Aquamarine template"></button><button type="button" class="t3" data-tpl="t3" aria-pressed="false" aria-label="Off-white template"></button></div><p class="muted" style="font-size:.85rem">The chosen template applies to all 184 employees.</p></div>
+        <div class="panel"><h4>Company details</h4><label class="f">Company name<input class="field" id="company" value="WalaPlus"></label><label class="f">Tagline (cover and Banner signature)<input class="field" id="tagline" value="Rewarding loyalty, every day."></label></div>
+      </div>
+    </div>
+
+    <div data-sub="campaigns" hidden>
+      <h1>Campaigns</h1><p class="sub">Push a creative and a caption to every employee. They share it with one button.</p>
+      <div class="kpis"><div class="kpi"><small>Active campaigns</small><b data-k="count"></b></div><div class="kpi"><small>Total shares</small><b data-k="shares"></b></div><div class="kpi"><small>Employees who shared</small><b>97</b></div><div class="kpi"><small>Est. reach</small><b>117.7K</b></div></div>
+      <div class="cols w">
+        <form class="panel" id="campform">
+          <h4>New campaign</h4>
+          <label class="f">Campaign name<input class="field" id="c-title" required placeholder="Ramadan offer"></label>
+          <label class="f">Headline on the creative<input class="field" id="c-head" required placeholder="Double points all month."></label>
+          <label class="f">Suggested caption<textarea class="field" id="c-cap" required placeholder="What employees will post. They can edit it before sharing."></textarea></label>
+          <div class="f">Creative<div class="tpl" style="max-width:320px"><button type="button" class="t1" data-cstyle="t1" aria-pressed="true" aria-label="Black creative"></button><button type="button" class="t2" data-cstyle="t2" aria-pressed="false" aria-label="Aquamarine creative"></button><button type="button" class="t3" data-cstyle="t3" aria-pressed="false" aria-label="Off-white creative"></button></div><span style="font-weight:400">Generated from the brand identity, or <button type="button" class="btn ghost sm" data-toast="Upload accepts PNG, JPG or MP4 up to 50 MB">upload your own</button></span></div>
+          <div class="f">Channels<div class="chs"><label><input type="checkbox" id="ch-li" value="LinkedIn" checked>LinkedIn</label><label><input type="checkbox" id="ch-x" value="X" checked>X</label><label><input type="checkbox" id="ch-wa" value="WhatsApp" checked>WhatsApp</label></div></div>
+          <button class="btn pri" type="submit">Push to 184 employees</button>
+        </form>
+        <div style="display:grid;gap:16px;align-content:start">
+          <div class="panel"><h4>Preview</h4><div data-cpreview style="border-radius:10px;overflow:hidden"></div></div>
+          <div class="panel"><h4>Top sharers this month</h4><div class="top5"><div><span class="av">LH</span>Layla Hassan<span>14</span></div><div><span class="av">FA</span>Faisal Al-Harbi<span>11</span></div><div><span class="av">AZ</span>Ahmed Zahran<span>9</span></div><div><span class="av">NA</span>Nora Al-Qahtani<span>7</span></div></div></div>
+        </div>
+      </div>
+      <h3 style="margin:28px 0 12px">Pushed campaigns</h3>
+      <div class="tbl"><table><thead><tr><th>Campaign</th><th>Channels</th><th>Pushed</th><th>Shares</th><th>Est. reach</th><th>Status</th></tr></thead><tbody id="camptable"></tbody></table></div>
+    </div>
+
+    <div data-sub="orders" hidden>
+      <h1>Card orders</h1><p class="sub">NFC cards are printed in batches. Each card is linked to one employee profile. "Powered by ReachN" is printed on the back.</p>
+      <div class="tbl"><table><thead><tr><th>Batch</th><th>Cards</th><th>Template</th><th>Status</th><th>Ship to</th></tr></thead><tbody>
+        <tr><td>#0007</td><td>53</td><td>Black / Aqua arc</td><td><span class="pill pend">Ready to print</span></td><td>Riyadh HQ</td></tr>
+        <tr><td>#0006</td><td>40</td><td>Black / Aqua arc</td><td><span class="pill warn">Printing</span></td><td>Riyadh HQ</td></tr>
+        <tr><td>#0005</td><td>56</td><td>Black / Aqua arc</td><td><span class="pill ok">Delivered</span></td><td>Jeddah office</td></tr>
+      </tbody></table></div>
+    </div>
+
+    <div data-sub="settings" hidden>
+      <h1>Settings</h1><p class="sub">Decide what employees may change. Everything else stays with HR.</p>
+      <div class="cols">
+        <div class="panel"><h4>Employees can edit</h4>
+          <label class="tog">Display name<input type="checkbox" id="s-name" checked></label>
+          <label class="tog">Photo<input type="checkbox" id="s-photo" checked></label>
+          <label class="tog">Work phone<input type="checkbox" id="s-phone" checked></label>
+          <label class="tog">LinkedIn URL<input type="checkbox" id="s-li" checked></label>
+          <div class="tog muted">Title, company, work email<span class="pill pend">HR only</span></div>
+        </div>
+        <div class="panel"><h4>Signature layouts offered</h4>
+          <label class="tog">Classic (photo + details)<input type="checkbox" id="s-l1" checked></label>
+          <label class="tog">Compact (logo + one block)<input type="checkbox" id="s-l2" checked></label>
+          <label class="tog">Banner (details + campaign line)<input type="checkbox" id="s-l3" checked></label>
+        </div>
+        <div class="panel"><h4>Sharing</h4>
+          <label class="tog">Add to Apple Wallet<input type="checkbox" id="s-aw" checked></label>
+          <label class="tog">Add to Google Wallet<input type="checkbox" id="s-gw" checked></label>
+          <label class="tog">Campaign sharing<input type="checkbox" id="s-cs" checked></label>
+        </div>
+        <div class="panel"><h4>Attribution</h4>
+          <div class="tog">"Powered by ReachN" on shared materials<span class="pill ok">Always on</span></div>
+          <p class="muted" style="font-size:.85rem">Shown on the contact card, wallet pass, signature, virtual background, cover, campaign creatives and the back of printed NFC cards.</p>
+          <div><span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- EMPLOYEE -->
+<div data-role="me" class="shell" hidden>
+  <nav class="side" aria-label="Employee">
+    <a href="#/app/me/profile" data-subnav="profile">My profile and card</a>
+    <a href="#/app/me/kit" data-subnav="kit">My brand kit</a>
+    <a href="#/app/me/campaigns" data-subnav="campaigns">Campaigns <span class="pill new" data-k="count"></span></a>
+    <a href="#/app/card">My public card ↗</a>
+    <div class="who"><div><b data-bind="name"></b><span data-bind="title"></span></div><span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span></div>
+  </nav>
+  <div class="main">
+    <div data-sub="profile">
+      <h1>My profile and card</h1><p class="sub">Edit what is yours. Your card and every asset update as you type.</p>
+      <div class="emp">
+        <form class="panel" onsubmit="return false">
+          <div class="photo"><div class="av" data-av></div><div><label class="btn ghost sm" for="photo" style="cursor:pointer">Change photo</label><input id="photo" type="file" accept="image/*" hidden><p class="muted" style="font-size:.72rem;margin-top:6px">Square, face centered.</p></div></div>
+          <label class="f">Full name<input class="field" id="f-name" value="Ahmed Zahran"></label>
+          <label class="f">Title <span class="lock">HR ONLY</span><input class="field" id="f-title" value="Head of Marketing" readonly></label>
+          <label class="f">Company <span class="lock">HR ONLY</span><input class="field" id="f-company" value="WalaPlus" readonly></label>
+          <label class="f">Work email <span class="lock">HR ONLY</span><input class="field" id="f-email" value="a.zahran@walaplus.com" readonly></label>
+          <label class="f">Work phone<input class="field" id="f-phone" value="+966 50 123 4567"></label>
+          <label class="f">LinkedIn URL<input class="field" id="f-linkedin" value="linkedin.com/in/zahranppc"></label>
+        </form>
+        <div style="display:grid;gap:16px">
+          <div class="panel"><h4>Employee card · NFC + QR <button type="button" data-flip>Flip card ↺</button></h4>
+            <div class="cardwrap" data-cardwrap><div class="flip"><div class="nfc" data-nfc-front></div><div class="nfc back" data-nfc-back></div></div></div>
+            <p class="muted" style="font-size:.85rem">Front carries your name and QR. The back carries the wordmark, your link and "Powered by ReachN".</p>
+          </div>
+          <div class="panel"><h4>Share</h4>
+            <div class="row"><button class="btn pri sm" type="button" data-share="card">Share employee card</button><button class="btn sm" type="button" data-share="contact">Share contact card</button><a class="btn ghost sm" href="#/app/card">Preview public card →</a></div>
+            <div class="row"><button class="btn wallet sm" type="button" data-wallet="Apple">Add to Apple Wallet</button><button class="btn wallet sm" type="button" data-wallet="Google">Add to Google Wallet</button></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div data-sub="kit" hidden>
+      <h1>My brand kit</h1><p class="sub">Generated from your profile and the company identity. Choose a signature layout, then copy or download.</p>
+      <div class="panel" style="margin-bottom:16px"><h4>Email signature · choose 1 of 3 layouts <button type="button" data-toast="Signature copied. Paste it into Gmail or Outlook settings.">Copy selected signature</button></h4>
+        <div class="sigs" data-sigs></div>
+      </div>
+      <div class="cols">
+        <div class="panel"><h4>Virtual background <button type="button" data-toast="Background downloaded, 1920×1080">Download</button></h4><div class="vbg"><span class="arc"><svg viewBox="0 0 100 37.31" aria-hidden="true"><use href="#wp-arc"/></svg></span><svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg><div class="who"><b data-bind="name"></b><span data-bind="title"></span> · <span data-bind="company"></span></div><span class="pwr on-dark">Powered by <span class="rn">Reach<b>N</b></span></span></div></div>
+        <div class="panel"><h4>Cover banner <button type="button" data-toast="Cover downloaded, 1584×396 for LinkedIn">Download</button></h4><div class="cover"><svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg><span class="arc"><svg viewBox="0 0 100 37.31" aria-hidden="true"><use href="#wp-arc"/></svg></span><div class="tag" data-bind="tagline"></div><span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span></div></div>
+      </div>
+    </div>
+
+    <div data-sub="campaigns" hidden>
+      <h1>Campaigns</h1><p class="sub">Shared by your company. Adjust the caption if you like, then post with one button. Sharing is optional.</p>
+      <div class="feed" id="feed"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PUBLIC CARD -->
+<div data-role="card" class="main" hidden style="max-width:1000px;margin-inline:auto">
+  <div class="pub">
+    <div style="display:grid;gap:14px">
+      <p class="eyebrow">What the other person sees</p>
+      <h1 style="font-size:clamp(1.6rem,3vw,2.2rem)">Tap, scan, or open from the wallet.</h1>
+      <p class="muted">The page uses the same design as the printed card. No app is needed to view it.</p>
+      <ul class="ul"><li>Opens at <span class="mono" data-bind="url"></span></li><li>Save the contact in one tap, or send details back</li><li>Add the card to Apple Wallet or Google Wallet</li><li>Always shows the latest profile data</li></ul>
+      <div class="row"><a class="btn sm" href="#/app/me/profile">← Edit profile</a><button class="btn ghost sm" type="button" data-share="contact">Show QR</button><button class="btn wallet sm" type="button" data-wallet="Apple">Wallet pass preview</button></div>
+    </div>
+    <div class="stage"><div class="phone"><div class="scr"><div class="notch"></div><div class="pp" data-pp></div></div></div></div>
+  </div>
+</div>
+</div>
+
+<div class="modal" data-modal role="dialog" aria-modal="true" aria-labelledby="modal-title"><div class="box">
+  <h3 id="modal-title"></h3>
+  <div data-modal-body></div>
+  <p class="muted" style="font-size:.82rem" data-modal-note></p>
+  <button class="btn ghost sm" type="button" data-close>Close</button>
+</div></div>
+<div class="toast" data-toast-el role="status"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+(function(){
+  const $=(s,r=document)=>r.querySelector(s), $$=(s,r=document)=>[...r.querySelectorAll(s)];
+  const WM='<svg class="wm" viewBox="0 0 1000 168.19" role="img" aria-label="WalaPlus"><use href="#wp-wm"/></svg>', ARC='<svg viewBox="0 0 100 37.31" aria-hidden="true"><use href="#wp-arc"/></svg>', PWR='<span class="pwr">Powered by <span class="rn">Reach<b>N</b></span></span>';
+  const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+  const S={name:'Ahmed Zahran',title:'Head of Marketing',company:'WalaPlus',email:'a.zahran@walaplus.com',phone:'+966 50 123 4567',linkedin:'linkedin.com/in/zahranppc',tagline:'Rewarding loyalty, every day.',photo:null,sig:'classic',cstyle:'t1'};
+  const campaigns=[
+    {id:3,title:'New brand launch',head:'Meet the new WalaPlus.',caption:'Same WalaPlus, new look. Proud of what our team has built. #WalaPlus #NewBrand',style:'t1',channels:['LinkedIn','X','WhatsApp'],shares:87,reach:'41.2K',date:'21 Sep'},
+    {id:2,title:'We are hiring: Sales',head:'Join the team. 6 open roles.',caption:'We are growing the sales team in Riyadh. Know someone great? Send them my way. #Hiring',style:'t2',channels:['LinkedIn','WhatsApp'],shares:52,reach:'18.6K',date:'14 Sep'},
+    {id:1,title:'National Day rewards',head:'National Day rewards are live.',caption:'Celebrating Saudi National Day with rewards for every member. #SaudiNationalDay',style:'t3',channels:['LinkedIn','X','WhatsApp'],shares:113,reach:'57.9K',date:'09 Sep'}
+  ];
+  const slug=()=>S.name.trim().toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'')||'profile';
+  const url=()=>'reachn.com/'+S.company.toLowerCase().replace(/[^a-z0-9]+/g,'')+'/'+slug();
+  const initials=()=>S.name.split(/\s+/).filter(Boolean).slice(0,2).map(w=>w[0].toUpperCase()).join('');
+  const avHTML=()=>S.photo?'<img src="'+S.photo+'" alt="">':initials();
+
+  /* QR: real and scannable via qrcodejs; deterministic placeholder if the library is blocked */
+  function qr(el,text,size){
+    el.innerHTML='';
+    if(window.QRCode){new QRCode(el,{text:'https://'+text,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});return;}
+    const c=document.createElement('canvas');c.width=c.height=25;const g=c.getContext('2d');g.fillStyle='#fff';g.fillRect(0,0,25,25);g.fillStyle='#111';
+    let h=7;for(const ch of text)h=(h*31+ch.charCodeAt(0))>>>0;
+    for(let y=0;y<25;y++)for(let x=0;x<25;x++){h^=h<<13;h^=h>>>17;h^=h<<5;h>>>=0;if(h&1)g.fillRect(x,y,1,1);}
+    [[0,0],[18,0],[0,18]].forEach(([x,y])=>{g.fillStyle='#111';g.fillRect(x,y,7,7);g.fillStyle='#fff';g.fillRect(x+1,y+1,5,5);g.fillStyle='#111';g.fillRect(x+2,y+2,3,3);});
+    el.appendChild(c);
+  }
+
+  /* three signature layouts */
+  const li=()=>esc(S.linkedin.replace(/^https?:\/\/(www\.)?/,''));
+  const SIGS={
+    classic:['Classic','Photo and details',()=>`<div class="top"><span class="av">${avHTML()}</span><div><b class="n">${esc(S.name)}</b><span class="l">${esc(S.title)} · ${esc(S.company)}</span><span class="l"><u>${esc(S.phone)}</u> · <u>${esc(S.email)}</u></span><span class="l"><u>${li()}</u></span></div></div>${WM}`],
+    compact:['Compact','Logo and one block',()=>`<div class="top">${WM}<span class="rule"></span><div><b class="n">${esc(S.name)}</b><span class="l">${esc(S.title)}, ${esc(S.company)}</span><span class="l"><u>${esc(S.phone)}</u> | <u>${esc(S.email)}</u> | <u>${li()}</u></span></div></div>`],
+    banner:['Banner','Details and campaign line',()=>`<div><b class="n">${esc(S.name)}</b><span class="l">${esc(S.title)} · ${esc(S.company)}</span><span class="l"><u>${esc(S.phone)}</u> · <u>${esc(S.email)}</u> · <u>${li()}</u></span></div><div class="bn"><span>${esc(S.tagline)}</span>${WM}</div>`]
+  };
+  function renderSigs(){
+    $('[data-sigs]').innerHTML=Object.entries(SIGS).map(([k,[n,d,f]])=>`<button type="button" class="sigopt" data-sig="${k}" aria-pressed="${S.sig===k}"><span class="cap"><span>${n} <span style="font-weight:400;opacity:.7">· ${d}</span></span>${S.sig===k?'<span class="pill ok">Selected</span>':'<span class="pill pend">Use this</span>'}</span><span class="sig ${k}">${f()}${PWR}</span></button>`).join('');
+  }
+
+  /* campaigns */
+  const creative=c=>`<div class="crt ${c.style}">${WM}<h5>${esc(c.head)}</h5><span class="arc">${ARC}</span>${PWR}</div>`;
+  function renderCampaigns(){
+    $$('[data-k="count"]').forEach(e=>e.textContent=campaigns.length);
+    $$('[data-k="shares"]').forEach(e=>e.textContent=campaigns.reduce((a,c)=>a+c.shares,0));
+    $('#camptable').innerHTML=campaigns.map(c=>`<tr><td><b>${esc(c.title)}</b></td><td>${c.channels.join(' · ')}</td><td>${c.date}</td><td>${c.shares}</td><td>${c.reach}</td><td><span class="pill ok">Live</span></td></tr>`).join('');
+    $('#feed').innerHTML=campaigns.map(c=>`<article class="camp">${creative(c)}<div class="body"><h3>${esc(c.title)}<span class="meta">${c.date}</span></h3><label class="f">Caption<textarea class="field" id="cap-${c.id}" data-cap="${c.id}">${esc(c.caption)}</textarea></label><div class="sh-btns">${c.channels.map(ch=>`<button class="btn sm ${ch==='LinkedIn'?'pri':''}" type="button" data-post="${ch}" data-id="${c.id}">Share on ${ch}</button>`).join('')}<button class="btn ghost sm" type="button" data-copycap="${c.id}">Copy caption</button></div><span class="meta">${c.shares} colleagues shared this</span></div></article>`).join('');
+  }
+  function renderPreview(){
+    $('[data-cpreview]').innerHTML=creative({style:S.cstyle,head:$('#c-head').value||'Your headline here.'});
+  }
+  function post(ch,id){
+    const c=campaigns.find(x=>x.id==id), link='https://walaplus.com', t=encodeURIComponent(c.caption), u=encodeURIComponent(link);
+    const to={LinkedIn:`https://www.linkedin.com/sharing/share-offsite/?url=${u}`,X:`https://twitter.com/intent/tweet?text=${t}&url=${u}`,WhatsApp:`https://wa.me/?text=${t}%20${u}`}[ch];
+    try{window.open(to,'_blank','noopener');}catch(e){}
+    c.shares++;toast('Opening '+ch+' with the creative and caption');setTimeout(renderCampaigns,0);
+  }
+
+  /* everything bound to the profile */
+  function render(){
+    $$('[data-bind]').forEach(el=>{const k=el.dataset.bind;el.textContent=k==='url'?url():S[k];});
+    $$('[data-av]').forEach(el=>el.innerHTML=avHTML());
+    $$('[data-nfc-front]').forEach(el=>{el.innerHTML=`${WM}<span class="chip"></span><span class="arc">${ARC}</span><div class="qr"></div><div class="who"><b>${esc(S.name)}</b><span>${esc(S.title)}</span></div><span class="nfcmark">NFC</span>`;qr($('.qr',el),url(),120);});
+    $$('[data-nfc-back]').forEach(el=>el.innerHTML=`<span class="arc">${ARC}</span>${WM}<span class="url">${esc(url())}</span>${PWR}`);
+    $$('[data-pp]').forEach(el=>el.innerHTML=`<div class="hd"><span class="arc">${ARC}</span>${WM}</div><div class="av">${avHTML()}</div><div class="nm"><b>${esc(S.name)}</b><span>${esc(S.title)} · ${esc(S.company)}</span></div><div class="acts"><button class="btn pri" type="button" data-toast="Contact saved to phone">Save contact</button><button class="btn ghost" type="button" data-toast="Exchange: they send their details back to you">Exchange</button><button class="btn wallet" type="button" data-wallet="Apple">Add to Apple Wallet</button><button class="btn wallet" type="button" data-wallet="Google">Add to Google Wallet</button></div><div class="rows"><div><small>Email</small><span>${esc(S.email)}</span></div><div><small>Phone</small><span>${esc(S.phone)}</span></div><div><small>LinkedIn</small><span>${li()}</span></div></div><div class="ft">${PWR}</div>`);
+    renderSigs();
+  }
+
+  /* roster (sample) */
+  const people=[['Ahmed Zahran','Head of Marketing',[1,1,1,1],'ok',1,'Shipped'],['Sara Al-Otaibi','HR Director',[1,1,1,1],'ok',1,'Shipped'],['Faisal Al-Harbi','Sales Manager',[1,1,1,0],'warn',1,'Ready'],['Nora Al-Qahtani','Partnerships Lead',[0,1,1,1],'warn',0,'Pending'],['Omar Siddiqui','Product Designer',[1,1,0,0],'warn',0,'Pending'],['Layla Hassan','Account Executive',[1,1,1,1],'ok',1,'Printing'],['Khalid Al-Dossari','Finance Manager',[0,1,1,0],'pend',0,'Pending']];
+  const kit={ok:'Complete',warn:'Incomplete',pend:'Not started'}, cardP={Shipped:'ok',Printing:'warn',Ready:'pend',Pending:'pend'};
+  function roster(q){
+    q=(q||'').toLowerCase();
+    $('#roster').innerHTML=people.filter(p=>(p[0]+p[1]).toLowerCase().includes(q)).map(p=>`<tr><td><span class="av">${p[0].split(' ').map(w=>w[0]).slice(0,2).join('')}</span>${p[0]}</td><td>${p[1]}</td><td><span class="checks">${p[2].map(v=>`<i class="${v?'y':''}">${v?'✓':'·'}</i>`).join('')}</span></td><td><span class="pill ${p[3]}">${kit[p[3]]}</span></td><td><span class="pill ${p[4]?'ok':'pend'}">${p[4]?'Added':'Not yet'}</span></td><td><span class="pill ${cardP[p[5]]}">${p[5]}</span></td><td><a class="btn ghost sm" href="#/app/me/profile">Open</a></td></tr>`).join('')||'<tr><td colspan="7" class="muted">No employee matches that search.</td></tr>';
+  }
+
+  /* modal, toast */
+  function modal(title,body,note){$('#modal-title').textContent=title;$('[data-modal-body]').innerHTML=body;$('[data-modal-note]').textContent=note;$('[data-modal]').classList.add('on');$('[data-close]').focus();}
+  const closeModal=()=>$('[data-modal]').classList.remove('on');
+  function share(kind){
+    modal(kind==='card'?'Share employee card':'Share contact card',
+      `<div class="qrbig solo"></div><div class="link" style="margin-top:14px"><input class="field" id="share-link" readonly value="https://${esc(url())}"><button class="btn sm" type="button" data-copy>Copy</button></div><div style="margin-top:12px">${PWR}</div>`,
+      kind==='card'?'Sends the card as an image with this link, by WhatsApp, email or AirDrop.':'Same design as the NFC card. Anyone who scans it can save your contact.');
+    qr($('.modal .qrbig'),url(),156);
+  }
+  function wallet(kind){
+    modal('Add to '+kind+' Wallet',
+      `<div class="pass"><span class="arc">${ARC}</span>${WM}<div><small>Name</small><b>${esc(S.name)}</b></div><div class="two"><div><small>Title</small>${esc(S.title)}</div><div><small>Company</small>${esc(S.company)}</div></div><div class="qrbig"></div><div class="tap">HOLD NEAR READER · NFC</div>${PWR}</div><button class="btn wallet" type="button" data-addpass="${kind}" style="margin-top:14px;width:100%">Add to ${kind} Wallet</button>`,
+      'The pass shares your contact by NFC or QR and updates when your profile changes.');
+    qr($('.modal .qrbig'),url(),116);
+  }
+  let tt;function toast(m){const el=$('[data-toast-el]');el.textContent=m;el.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>el.classList.remove('on'),2400);}
+
+  /* router: #/ , #/features , #/app/admin/campaigns ... */
+  const firstSub={admin:'employees',me:'profile'};
+  /* links are intercepted so routing also works where the host blocks hash navigation (sandboxed viewers) */
+  let here=location.hash;
+  function go(path){here=path;try{history.pushState(null,'',path);}catch(e){}route();}
+  function route(){
+    const p=here.replace(/^#\/?/,'').split('/').filter(Boolean);
+    const page=p[0]||'home', app=page==='app';
+    $('[data-site]').hidden=app;$('[data-app]').hidden=!app;
+    if(app){
+      const role=$('[data-role="'+p[1]+'"]')?p[1]:'login', sub=p[2]||firstSub[role];
+      $$('[data-role]').forEach(r=>r.hidden=r.dataset.role!==role);
+      $$('[data-rolenav]').forEach(a=>a.dataset.rolenav===role?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+      const r=$('[data-role="'+role+'"]');
+      $$('[data-sub]',r).forEach(s=>s.hidden=s.dataset.sub!==sub);
+      $$('[data-subnav]',r).forEach(a=>a.dataset.subnav===sub?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+    }else{
+      const pg=$('main[data-page="'+page+'"]')?page:'home';
+      $$('main[data-page]').forEach(m=>m.hidden=m.dataset.page!==pg);
+      $$('[data-nav]').forEach(a=>a.dataset.nav===pg?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
+    }
+    document.title=app?'ReachN · WalaPlus workspace':'ReachN';
+    window.scrollTo(0,0);
+  }
+
+  /* events */
+  [['f-name','name'],['f-phone','phone'],['f-linkedin','linkedin'],['company','company'],['tagline','tagline']].forEach(([id,k])=>{
+    const el=document.getElementById(id);el.addEventListener('input',()=>{S[k]=el.value;if(k==='company')$('#f-company').value=el.value;render();});
+  });
+  $('#photo').addEventListener('change',e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();r.onload=()=>{S.photo=r.result;render();};r.readAsDataURL(f);});
+  $('#adm-search').addEventListener('input',e=>roster(e.target.value));
+  $('#c-head').addEventListener('input',renderPreview);
+  $('#loginform').addEventListener('submit',e=>e.preventDefault());
+  $('#demoform').addEventListener('submit',e=>{e.preventDefault();e.target.reset();toast('Request received. We reply within one business day.');});
+  $('#campform').addEventListener('submit',e=>{
+    e.preventDefault();
+    const ch=$$('.chs input:checked').map(i=>i.value);
+    if(!ch.length){toast('Select at least one channel');return;}
+    campaigns.unshift({id:Date.now(),title:$('#c-title').value,head:$('#c-head').value,caption:$('#c-cap').value,style:S.cstyle,channels:ch,shares:0,reach:'0',date:'Today'});
+    e.target.reset();$$('.chs input').forEach(i=>i.checked=true);renderCampaigns();renderPreview();toast('Campaign pushed to 184 employees');
+  });
+  document.addEventListener('input',e=>{const id=e.target.dataset&&e.target.dataset.cap;if(id){const c=campaigns.find(x=>x.id==id);if(c)c.caption=e.target.value;}});
+  document.addEventListener('click',e=>{
+    const t=e.target.closest('button,[data-cardwrap]');if(!t)return;const d=t.dataset;
+    if(d.toast)toast(d.toast);
+    else if(d.share)share(d.share);
+    else if(d.wallet)wallet(d.wallet);
+    else if(d.addpass){closeModal();toast('Card added to '+d.addpass+' Wallet');}
+    else if(d.sig){S.sig=d.sig;renderSigs();toast(SIGS[d.sig][0]+' signature selected');}
+    else if(d.post)post(d.post,d.id);
+    else if(d.copycap){const c=campaigns.find(x=>x.id==d.copycap);navigator.clipboard&&navigator.clipboard.writeText(c.caption).catch(()=>{});toast('Caption copied');}
+    else if(d.tpl){$$('[data-tpl]').forEach(x=>x.setAttribute('aria-pressed',x===t));toast('Template applied to all employees');}
+    else if(d.cstyle){S.cstyle=d.cstyle;$$('[data-cstyle]').forEach(x=>x.setAttribute('aria-pressed',x===t));renderPreview();}
+    else if('flip' in d||'cardwrap' in d)$('[data-cardwrap]').classList.toggle('flipped');
+    else if('copy' in d){navigator.clipboard&&navigator.clipboard.writeText('https://'+url()).catch(()=>{});toast('Link copied');}
+    else if('close' in d)closeModal();
+  });
+  $('[data-modal]').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  document.addEventListener('click',e=>{const a=e.target.closest('a[href^="#/"]');if(a&&!e.metaKey&&!e.ctrlKey){e.preventDefault();go(a.getAttribute('href'));}});
+  const sync=()=>{here=location.hash;route();};
+  window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);
+
+  roster();render();renderCampaigns();renderPreview();route();
+})();
+</script>
