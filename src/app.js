@@ -266,8 +266,9 @@
       $$('main[data-page]').forEach(m=>m.hidden=m.dataset.page!==pg);
       $$('[data-nav]').forEach(a=>a.dataset.nav===pg?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current'));
     }
-    window.scrollTo(0,0);
+    closeMenus();window.scrollTo(0,0);
   }
+  function closeMenus(){$$('header[data-open]').forEach(hd=>{hd.removeAttribute('data-open');$('[data-menu]',hd).setAttribute('aria-expanded','false');});}
 
   /* ---------- events ---------- */
   [['f-name','name'],['f-phone','phone'],['f-linkedin','linkedin'],['company','company'],['tagline','tagline']].forEach(([id,k])=>{
@@ -298,7 +299,8 @@
     const a=e.target.closest('a[href^="#/"]');
     if(a&&!e.metaKey&&!e.ctrlKey){e.preventDefault();go(a.getAttribute('href'));return;}
     const t=e.target.closest('button,[data-cardwrap]');if(!t)return;const d=t.dataset;
-    if('lang' in d)setLang(LANG==='ar'?'en':'ar');
+    if('menu' in d){const hd=t.closest('header'),open=!hd.hasAttribute('data-open');hd.toggleAttribute('data-open',open);t.setAttribute('aria-expanded',open);}
+    else if('lang' in d)setLang(LANG==='ar'?'en':'ar');
     else if(d.toast)toast(d.toast);
     else if(d.share)share(d.share);
     else if(d.wallet)wallet(d.wallet);
@@ -319,7 +321,7 @@
     else if('close' in d)closeModal();
   });
   $('[data-modal]').addEventListener('click',e=>{if(e.target===e.currentTarget)closeModal();});
-  document.addEventListener('keydown',e=>{if(e.key==='Escape')closeModal();});
+  document.addEventListener('keydown',e=>{if(e.key==='Escape'){closeModal();closeMenus();}});
   const sync=()=>{here=location.hash;route();};
   window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);
 

@@ -514,3 +514,30 @@ html[lang="ar"] .flow div::before{content:"الخطوة " counter(s)}
 @media (max-width:960px){.vgrid{grid-template-columns:repeat(2,1fr);gap:12px}.vt .cap{padding:12px 14px 16px}.vt h3{font-size:1.02rem}}
 @media (max-width:560px){.vt p{display:none}.vt{border-radius:18px}.vis{border-radius:16px}.vt .go{width:24px;height:24px;font-size:.8rem}.vt.cta .go{width:34px;height:34px}}
 @media (prefers-reduced-motion:reduce){.vt{transition:none}.vt:hover{transform:none}}
+
+/* ---- mobile menu ---- */
+.menubtn{display:none;margin-inline-start:auto;width:42px;height:42px;border-radius:10px;border:1px solid var(--line-2);background:var(--surface);place-items:center;padding:0;flex:none}
+.menubtn i,.menubtn i::before,.menubtn i::after{display:block;width:18px;height:2px;background:var(--ink);border-radius:2px;content:"";transition:transform .2s,top .2s}
+.menubtn i{position:relative}
+.menubtn i::before{position:absolute;top:-6px}
+.menubtn i::after{position:absolute;top:6px}
+[data-open] .menubtn i{background:transparent}
+[data-open] .menubtn i::before{top:0;transform:rotate(45deg)}
+[data-open] .menubtn i::after{top:0;transform:rotate(-45deg)}
+@media (max-width:860px){
+  .menubtn{display:grid}
+  .sh .wrap{flex-wrap:wrap;gap:0 12px;padding-block:10px}
+  .sh nav,.sh .r{display:none;width:100%;margin:0}
+  .sh[data-open] nav{display:grid;gap:2px;padding-top:12px}
+  .sh[data-open] nav a{padding:12px;font-size:1.02rem;border-radius:10px}
+  .sh[data-open] .r{display:grid;grid-template-columns:1fr 1fr;gap:8px;padding:12px 0 8px;border-top:1px solid var(--line);margin-top:8px}
+  .sh[data-open] .r .btn,.sh[data-open] .r .langbtn{padding:12px;font-size:.95rem;justify-content:center;text-align:center}
+  .sh[data-open] .r .btn.pri{grid-column:1/-1;order:-1}
+  .ah .in{flex-wrap:wrap;gap:0 12px}
+  .ah .ws,.ah .roles,.ah .langbtn,.ah .back{display:none}
+  .ah[data-open] .roles{display:grid;width:100%;margin:12px 0 0;background:transparent;padding:0;gap:2px}
+  .ah[data-open] .roles a{padding:12px;font-size:1rem}
+  .ah[data-open] .langbtn{display:block;flex:1;margin-top:10px;padding:12px}
+  .ah[data-open] .back{display:block;flex:1;margin-top:10px;padding:12px;text-align:center;border:1px solid var(--line-2);border-radius:8px;color:var(--ink);font-weight:600}
+}
+@media (prefers-reduced-motion:reduce){.menubtn i,.menubtn i::before,.menubtn i::after{transition:none}}
