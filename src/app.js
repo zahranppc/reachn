@@ -149,6 +149,10 @@
     $('#camptable').innerHTML=campaigns.map(c=>`<tr><td><b>${esc(c.title)}</b></td><td data-notr>${c.channels.join(' · ')}</td><td>${c.date}</td><td>${c.shares}</td><td>${c.reach}</td><td>${pill('ok','Live')}</td></tr>`).join('');
     $('#feed').innerHTML=campaigns.map(c=>`<article class="camp">${creative(c)}<div class="body"><h3><span>${esc(c.title)}</span><span class="meta">${c.date}</span></h3><label class="f">Caption<textarea class="field" id="cap-${c.id}" data-cap="${c.id}" data-notr>${esc(c.caption)}</textarea></label><div class="sh-btns">${c.channels.map(ch=>`<button class="btn sm ${ch==='LinkedIn'?'pri':''}" type="button" data-post="${ch}" data-id="${c.id}">Share on ${ch}</button>`).join('')}<button class="btn ghost sm" type="button" data-copycap="${c.id}">Copy caption</button></div><span class="meta">${c.shares} colleagues shared this</span></div></article>`).join('');
   }
+  const renderTiles=()=>{
+    $$('[data-vcamp]').forEach(el=>el.innerHTML=creative(campaigns.find(c=>c.id===3)||campaigns[0]));
+    $$('[data-vli]').forEach(el=>el.innerHTML=creative({style:'t2',head:'Welcome, Layla.'}));
+  };
   const renderPreview=()=>$('[data-cpreview]').innerHTML=creative({style:S.cstyle,head:$('#c-head').value||'Your headline here.'});
   function post(ch,id){
     const c=campaigns.find(x=>x.id==id),t=encodeURIComponent(c.caption),u=encodeURIComponent('https://walaplus.com');
@@ -209,7 +213,9 @@
     $$('[data-nfc-front]').forEach(el=>{el.setAttribute('data-notr','');el.innerHTML=`${WM}<span class="chip"></span><span class="arc">${ARC}</span><div class="qr"></div><div class="who"><b>${esc(S.name)}</b><span>${esc(S.title)}</span></div><span class="nfcmark">NFC</span>`;qr($('.qr',el),url(),120);});
     $$('[data-nfc-back]').forEach(el=>{el.setAttribute('data-notr','');el.innerHTML=`<span class="arc">${ARC}</span>${WM}<span class="url">${esc(url())}</span>${PWR}`;});
     $$('[data-pp]').forEach(el=>el.innerHTML=`<div class="hd" data-notr><span class="arc">${ARC}</span>${WM}</div><div class="av" data-notr>${avHTML()}</div><div class="nm" data-notr><b>${esc(S.name)}</b><span>${esc(S.title)} · ${esc(S.company)}</span></div><div class="acts"><button class="btn pri" type="button" data-toast="Contact saved to phone">Save contact</button><button class="btn ghost" type="button" data-exchange>Exchange</button><button class="btn wallet" type="button" data-wallet="Apple">Add to Apple Wallet</button><button class="btn wallet" type="button" data-wallet="Google">Add to Google Wallet</button></div><div class="rows"><div><small>Email</small><span data-notr>${esc(S.email)}</span></div><div><small>Phone</small><span data-notr dir="ltr">${esc(S.phone)}</span></div><div><small data-notr>LinkedIn</small><span data-notr>${li()}</span></div></div><div class="ft" data-notr>${PWR}</div>`);
-    qr($('[data-badgeqr]'),url(),96);
+    $$('[data-badgeqr]').forEach(el=>qr(el,url(),96));
+    $$('[data-vqr]').forEach(el=>qr(el,url(),160));
+    $$('[data-vsig]').forEach(el=>{el.className='sig classic';el.setAttribute('data-notr','');el.innerHTML=SIGS.classic[2]()+PWR;});
     renderSigs();
   }
   function roster(q){
@@ -317,7 +323,7 @@
   const sync=()=>{here=location.hash;route();};
   window.addEventListener('hashchange',sync);window.addEventListener('popstate',sync);
 
-  roster();render();renderCampaigns();renderPreview();renderLeads();renderInts();liSync();route();
+  roster();render();renderCampaigns();renderPreview();renderTiles();renderLeads();renderInts();liSync();route();
   let first='en';
   try{first=new URLSearchParams(location.search).get('lang')||localStorage.getItem('reachn-lang')||'en';}catch(e){}
   if(first==='ar')setLang('ar');
